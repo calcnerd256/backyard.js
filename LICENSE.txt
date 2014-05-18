@@ -1,0 +1,27 @@
+The original author of this repository heleby expresses intent to bless the Public Domain with the contents herein.
+
+I am not a lawyer.
+This license is a statement of intent and is not intended to be legally binding.
+I will make a good-faith effort to communicate my goals clearly, until I get tired of doing so.
+It's too hard to guarantee that I'll say exactly what I mean in a way that a judge can correctly interpret, so let's just all try not to be jerks about it.
+
+The goals of this license:
+I don't want anybody to have to think about whether it's okay to use the contents of this repository in any way they wish.
+I don't want to miss out on the chance to make a living off of something that I create along the way or some other derivative work of this project.
+I don't want to be responsible for things other people contribute to this repository. However, I do wish to be free to reject contributions for any reason or no reason.
+I don't want my rejection of your contribution to amount to censoring you. I hope the community, if any arises, will not default to respecting my opinion on what is or isn't the authoritative version of this project just because I started the repository whence the others forked.
+
+Consequences of this license:
+Anyone who wishes to fork this project may release their derivative works under any license they wish. This license is not contagious.
+If you wish to contribute to this repository, you release your contribution into the Public Domain by doing so.
+All contributions to this repository must be released under at least thes license of the repository itself, including relicensing provisions. You must have the authority to do so, or the act of contributing here will constitute a violation of somebody else's property rights or your part. Cleaning up such a violation will be a huge pain for me, so please don't do it. If it isn't yours, don't send me a pull request for it.
+The contents of this repository are presented as-is, with no warranty of any kind.
+Anyone is free to do whatever they wish with the contents of this repository. It is your choice, not mine.
+If you fork this repository, you are not obligated to retain this license in your fork.
+If you issue a pull request via GitHub or other means, I'm going to assume you wish to commit the contents of that pull request to the public domain. I will not read your license. I am not a lawyer.
+At any time in the future, I may choose to alter the license in any direction. This in and of itself does not change the license of any snapshot of the history of the repository.
+There may be legal reasons to retroactively change the license on existing commits. Those will have to be handled somehow.
+
+The lists above are not exhaustive. I'm just trying to get something written to communicate my understanding of my intentions here. A rewrite may be necessary.
+
+Please have fun.
