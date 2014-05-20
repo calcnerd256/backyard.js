@@ -1,2 +1,4 @@
 * backyard.js
 the newest (sic) JavaScript framework with all the buzzwords
+
+check out README.html instead
