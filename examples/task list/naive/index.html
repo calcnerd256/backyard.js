@@ -1,7 +1,47 @@
 <html>
  <head>
   <title>task list</title>
+  <template id="task">
+   <input type="checkbox" id="task_check"></input>
+   <input type="text" id="task_title"></input>
+  </template>
+  <script src="./task_component.js"></script>
+  <script>
+   (
+    function closures_hate_you(){
+
+     // monofill so I won't have to write it twice
+     if("DocumentFragment" in window)
+      if(!("getElementById" in DocumentFragment.prototype))
+       DocumentFragment.prototype.getElementById = function(id){
+        // TODO: per spec, you're supposed to escape certain characters
+        // https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment.querySelector
+        // but I'm not going to bother with that until I need it
+        return this.querySelector("#" + id);
+       };
+
+
+     function ready(){
+      var task_template = document.getElementById("task");
+      var temple = task_template;
+     }
+
+     document.addEventListener(
+      "readystatechange",
+      function stateChangeHandler(){
+       if("complete" == document.readyState) ready();
+      }
+     );
+    }
+   )();
+  </script>
  </head>
  <body>
+  <h1>TODO</h1>
+  <ul id="tasks">
+   <li>
+    <task />
+   </li>
+  </ul>
  </body>
 </html>
