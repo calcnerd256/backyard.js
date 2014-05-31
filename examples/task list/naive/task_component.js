@@ -76,6 +76,6 @@
 		task_DOM_prototype.createdCallback = function(){
 			shadeTaskElement(this, task_template);
 		}
-		document.registerElement("x-task", {prototype: task_DOM_prototype});
+		document.registerElement("backyard-task", {prototype: task_DOM_prototype});
 	}
 )();

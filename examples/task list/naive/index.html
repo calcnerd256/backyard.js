@@ -20,6 +20,44 @@
         return this.querySelector("#" + id);
        };
 
+     var task_objects = [];
+     function load_local(key){
+      if(arguments.length) key = "backyard tasks";
+      var tasks_headers = {history: [], state: "backyard_task_head", work: "backyard_task_staging"};
+      if(key in localStorage)
+       try{
+        tasks_headers = JSON.parse(localStorage[key]);
+       }
+       catch(e){
+        //TODO: fail sanely without smashing everything
+        task_headers = {error: "not valid JSON", target: "root"};
+       }
+      if("error" in task_headers) return task_objects = [task_headers];
+      var state_key = "backyand_task_head";
+      if("state" in tasks_headers)
+       state_key = tasks_headers.state;
+      var state = {head: [{type: "task", task: {title: "create tasks", done: false}, history: []}], chunks: []};
+      if(state_key in localStorage)
+       try{
+        state = JSON.parse(localStorage[state_key]);
+       }
+       catch(e){
+        task_headers = {error: "not valid JSON", target: "state"};
+       }
+      //TODO: read chunks out of the state
+      // state has a head and a list of chunks
+      // the chunks are keys in localStorage; the state is a tree
+      // the head is a list of things, stringly typed
+      //TODO: implement the "task" type
+      // a task has a snapshot of its title and a doneness, and its history is a list of task snapshots or keys into localStorage
+      // if a history element is a key, it should point to an array of old values, which are snapshots or keys
+      //TODO: implement the explicit "indirect" type for lookups
+      //TODO: figure out how to make unique keys quickly and efficiently in keyspace
+       
+      //TODO: if "state" key doesn't exist, try to read most recent history
+      //TODO: read incomplete transaction out of "work" and try to recover if possible
+
+     }
 
      function ready(){
       var task_template = document.getElementById("task");
@@ -40,7 +78,7 @@
   <h1>TODO</h1>
   <ul id="tasks">
    <li>
-    <x-task />
+    <backyard-task />
    </li>
   </ul>
  </body>
