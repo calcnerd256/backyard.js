@@ -69,29 +69,13 @@
 			observer.observe(elem, options);
 
 		}
-		function catch_task(mut){
-			var task_template = document.getElementById("task");
-			var tasks = mut.target.querySelectorAll("task");
-			if(!tasks.length) return;
-			function setup(elem){
-				return shadeTaskElement(elem, task_template);
-			}
-			[].slice.call(tasks).map(setup);
-		}
-		document.addEventListener(
-			"DOMNodeInserted",
-			catch_task
-		);
-		function ready(){
-			var task_template = document.getElementById("task");
-			catch_task({target: document});
-		}
 
-		document.addEventListener(
-			"readystatechange",
-			function stateChangeHandler(){
-				if("complete" == document.readyState) ready();
-			}
-		);
+		// thanks, http://marcysutton.github.io/accessibility-of-web-components/slides.html#/slide14
+		var task_DOM_prototype = Object.create(HTMLElement.prototype);
+		var task_template = document.getElementById("task");
+		task_DOM_prototype.createdCallback = function(){
+			shadeTaskElement(this, task_template);
+		}
+		document.registerElement("x-task", {prototype: task_DOM_prototype});
 	}
 )();
