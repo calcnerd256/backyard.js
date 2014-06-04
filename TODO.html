@@ -1,6 +1,11 @@
 <html>
  <head>
   <title>TODO</title>
+  <template id="task">
+   <input type="checkbox" id="task_check"></input>
+   <input type="text" id="task_title"></input>
+  </template>
+  <script src="./examples/task list/naive/task_component.js"></script>
  </head>
  <body>
   <h1>incomplete tasks</h1>
@@ -8,31 +13,33 @@
    <h2>unsorted tasks</h2>
    <ul>
     <li>
-     organize tasks
+     <backyard-task title="organize tasks"></backyard-task>
     </li>
     <li>
-     make some demos
+     <backyard-task title="make some demos"></backyard-task>
     </li>
     <li>
-     present at Thunder Plains
+     <backyard-task title="present at Thunder Plains"></backyard-task>
     </li>
     <li>
-     explain demo directory structure in README
+     <backyard-task title="explain demo directory structure in README"></backyard-task>
     </li>
    </ul>
   </section>
   <section>
    <h2>demos</h2>
-   <h3>task list</h3>
+   <h3>
+    <backyard-task title="task list"></backyard-task>
+   </h3>
    <ul>
     <li>
-     make a simple task list, na&iuml;vely
+     <backyard-task title="make a simple task list, na&iuml;vely"></backyard-task>
     </li>
     <li>
-     extract features that will be useful for other apps
+     <backyard-task title="extract features that will be useful for other apps"></backyard-task>
     </li>
     <li>
-     use the task list to manage these TODO items
+     <backyard-task title="use the task list to manage these TODO items"></backyard-task>
     </li>
    </ul>
   </section>
