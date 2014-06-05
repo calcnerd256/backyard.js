@@ -36,6 +36,7 @@
      }
 
      function task_DOM_to_patch(){
+      //TODO
       return [];
      }
      function apply_task_patch(patch){
@@ -48,6 +49,7 @@
       );
      }
      function task_state_to_DOM(){
+      // TODO
      }
      function register_DOM_task(elem){
       var i = task_DOM.length;
@@ -70,7 +72,7 @@
        var key = "backyard tasks";//maybe upvar this
        save_local(key);
       }
-      // TODO: register this behavior
+      // register this behavior
       var observer = new MutationObserver(handle_change);
       var options = {
        attributes: true,
