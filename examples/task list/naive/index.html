@@ -42,6 +42,7 @@
      function task_state_to_DOM(){
      }
      function register_DOM_task(elem){
+console.log(elem);
       // when its properties change
       function handle_change(){
       //  compute a patch
@@ -54,11 +55,40 @@
       }
       // TODO: register this behavior
      }
+     function ensure_custom_element_events(){
+      if(!("backyard events" in window))
+       window["backyard events"] = {};
+      var events = window["backyard events"];
+      if(!("custom elements" in events))
+       events["custom elements"] = {};
+      var elements = events["custom elements"];
+      return elements;
+     }
+     function ensure_task_created_callbacks(){
+      var element_listeners = ensure_custom_element_events();
+      if(!("backyard-task" in element_listeners))
+       element_listeners["backyard-task"] = {};
+      var task_callbacks = element_listeners["backyard-task"];
+      if(!("created" in task_callbacks))
+       task_callbacks.created = function created(elem){
+        return created.callbacks.map(function(f){return f.call(elem);});
+       };
+      var created = task_callbacks.created;
+      if(!("callbacks" in created))
+       created.callbacks = [];
+      return created.callbacks;
+     }
      function setup_task_DOM_listeners(){
       // set up listeners to modify and save tasks when DOM changes
       //for each <backyard-task />
-      // TODO: register existing ones
-      // TODO: listen for incoming ones to register them
+      var existing = document.getElementsByTagName("backyard-task");
+      [].forEach.call(existing, register_DOM_task);
+      // listen for incoming ones to register them
+      ensure_task_created_callbacks().push(
+       function(){
+        return register_DOM_task(this);
+       }
+      );
      }
 
      function ready(){

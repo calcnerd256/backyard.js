@@ -75,6 +75,11 @@
 		var task_template = document.getElementById("task");
 		task_DOM_prototype.createdCallback = function(){
 			shadeTaskElement(this, task_template);
+			if("backyard events" in window)
+				if("custom elements" in window["backyard events"])
+					if("backyard-task" in window["backyard events"]["custom elements"])
+						if("created" in window["backyard events"]["custom elements"]["backyard-task"])
+							window["backyard events"]["custom elements"]["backyard-task"].created(this);
 		}
 		document.registerElement("backyard-task", {prototype: task_DOM_prototype});
 	}
