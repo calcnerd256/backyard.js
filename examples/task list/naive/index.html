@@ -22,7 +22,9 @@
 
      var task_objects = [];
      function load_local(key){
-      if(arguments.length) key = "backyard tasks";
+      if(!arguments.length)
+       key = "backyard tasks";
+      /* no, this is too much work to start; come back to it later
       var tasks_headers = {history: [], state: "backyard_task_head", work: "backyard_task_staging"};
       if(key in localStorage)
        try{
@@ -56,12 +58,44 @@
        
       //TODO: if "state" key doesn't exist, try to read most recent history
       //TODO: read incomplete transaction out of "work" and try to recover if possible
+      come back to the above stuff later */
+      //we're going to redo this after we get it working
+      if(!(key in localStorage)) localStorage[key] = "[]";
+      task_objects = JSON.parse(localStorage[key]);
 
+     }
+     function save_local(key){
+      if(!arguments.length) key = "backyard tasks";
+      localStorage[key] = JSON.stringify(task_objects);
+     }
+
+     function task_DOM_to_patch(){
+      return [];
+     }
+     function apply_task_patch(){
+     }
+     function task_state_to_DOM(){
+     }
+     function setup_task_DOM_listeners(){
+      // set up listeners to modify and save tasks when DOM changes
+      //for each <backyard-task />
+      // when its properties change
+      //  compute a patch
+      //  apply the patch to the local state
+      //  save the state
      }
 
      function ready(){
       var task_template = document.getElementById("task");
       var temple = task_template;
+      load_local("backyard tasks");
+
+      var patch = task_DOM_to_patch();
+      apply_task_patch();
+
+      task_state_to_DOM();
+      setup_task_DOM_listeners();
+
      }
 
      document.addEventListener(
