@@ -24,41 +24,6 @@
      function load_local(key){
       if(!arguments.length)
        key = "backyard tasks";
-      /* no, this is too much work to start; come back to it later
-      var tasks_headers = {history: [], state: "backyard_task_head", work: "backyard_task_staging"};
-      if(key in localStorage)
-       try{
-        tasks_headers = JSON.parse(localStorage[key]);
-       }
-       catch(e){
-        //TODO: fail sanely without smashing everything
-        task_headers = {error: "not valid JSON", target: "root"};
-       }
-      if("error" in task_headers) return task_objects = [task_headers];
-      var state_key = "backyand_task_head";
-      if("state" in tasks_headers)
-       state_key = tasks_headers.state;
-      var state = {head: [{type: "task", task: {title: "create tasks", done: false}, history: []}], chunks: []};
-      if(state_key in localStorage)
-       try{
-        state = JSON.parse(localStorage[state_key]);
-       }
-       catch(e){
-        task_headers = {error: "not valid JSON", target: "state"};
-       }
-      //TODO: read chunks out of the state
-      // state has a head and a list of chunks
-      // the chunks are keys in localStorage; the state is a tree
-      // the head is a list of things, stringly typed
-      //TODO: implement the "task" type
-      // a task has a snapshot of its title and a doneness, and its history is a list of task snapshots or keys into localStorage
-      // if a history element is a key, it should point to an array of old values, which are snapshots or keys
-      //TODO: implement the explicit "indirect" type for lookups
-      //TODO: figure out how to make unique keys quickly and efficiently in keyspace
-       
-      //TODO: if "state" key doesn't exist, try to read most recent history
-      //TODO: read incomplete transaction out of "work" and try to recover if possible
-      come back to the above stuff later */
       //we're going to redo this after we get it working
       if(!(key in localStorage)) localStorage[key] = "[]";
       task_objects = JSON.parse(localStorage[key]);
@@ -72,17 +37,28 @@
      function task_DOM_to_patch(){
       return [];
      }
-     function apply_task_patch(){
+     function apply_task_patch(patch){
      }
      function task_state_to_DOM(){
+     }
+     function register_DOM_task(elem){
+      // when its properties change
+      function handle_change(){
+      //  compute a patch
+       var patch = [];
+      //  apply the patch to the local state
+       apply_task_patch(patch);
+      //  save the state
+       var key = "backyard tasks";//maybe upvar this
+       save_local(key);
+      }
+      // TODO: register this behavior
      }
      function setup_task_DOM_listeners(){
       // set up listeners to modify and save tasks when DOM changes
       //for each <backyard-task />
-      // when its properties change
-      //  compute a patch
-      //  apply the patch to the local state
-      //  save the state
+      // TODO: register existing ones
+      // TODO: listen for incoming ones to register them
      }
 
      function ready(){
@@ -91,7 +67,7 @@
       load_local("backyard tasks");
 
       var patch = task_DOM_to_patch();
-      apply_task_patch();
+      apply_task_patch(patch);
 
       task_state_to_DOM();
       setup_task_DOM_listeners();
