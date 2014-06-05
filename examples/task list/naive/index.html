@@ -21,6 +21,7 @@
        };
 
      var task_objects = [];
+     var task_DOM = [];
      function load_local(key){
       if(!arguments.length)
        key = "backyard tasks";
@@ -38,22 +39,45 @@
       return [];
      }
      function apply_task_patch(patch){
+      patch.forEach(
+       function(p){
+        var task = task_objects[p.id]
+        task[p.key] = p["new"];
+        console.log(task);
+       }
+      );
      }
      function task_state_to_DOM(){
      }
      function register_DOM_task(elem){
-console.log(elem);
+      var i = task_DOM.length;
+      task_DOM.push(elem);
+      task_objects[i] = {};
       // when its properties change
-      function handle_change(){
-      //  compute a patch
-       var patch = [];
-      //  apply the patch to the local state
+      function handle_change(mutations){
+       // compute a patch
+       var patch = mutations.map(
+        function(rec){
+         var key = rec.attributeName;
+         var old = rec.oldValue;
+         var nv = elem.getAttribute(key);
+         return {id: i, key: key, old: old, "new": nv};
+        }
+       );
+       // apply the patch to the local state
        apply_task_patch(patch);
-      //  save the state
+       // save the state
        var key = "backyard tasks";//maybe upvar this
        save_local(key);
       }
       // TODO: register this behavior
+      var observer = new MutationObserver(handle_change);
+      var options = {
+       attributes: true,
+       attributeOldValue: true,
+       attributeFilter: ["finished", "title"]
+      };
+      observer.observe(elem, options);
      }
      function ensure_custom_element_events(){
       if(!("backyard events" in window))
