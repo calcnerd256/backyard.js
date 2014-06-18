@@ -207,15 +207,51 @@
 
       //TODO: consider emitting an event for removed_DOM
      }
+
+     function collect_task_garbage(){
+      // mutate_under zip (filter is_worth_keeping) (list task_objects task_DOM)
+      function is_worth_keeping(pair){
+       var task_object = pair[0];
+       var element = pair[1];
+       if(!task_object && !element) return false;
+       if(task_object)
+        if("title" in task_object)
+         if("" != task_object.title)
+          return true;
+       if(task_object)
+        if("finished" in task_object)
+         if(!(task_object.finished in {"false":0, "":0, "null":0}))
+          return true;
+       if(!element) return false;
+       var title = element.getAttributeNode("title");
+       if(title)
+        if("" != title.value)
+         return true;
+       var finished = element.getAttributeNode("finished");
+       if(!finished)
+        return false;
+       finished = finished.value; // lol dynamic typing
+       if(!finished) return false;
+       if("false" == finished) return false;
+      }
+      // list_pair = zip (filter is_worth_keeping (zip list_pair))
+      pairs = task_objects.map(
+       function(t,i,a){return get_task_and_DOM(i);}
+      );
+      pairs = pairs.filter(is_worth_keeping);
+      task_objects = pairs.map(function(p){return p[0]});
+      task_DOM = pairs.map(function(p){return p[1]});
+      //beware: patches are ephemeral
+     }
+
      function register_DOM_task(elem){
 
-      var i = get_index_of_DOM(elem, true);
-      if(!task_objects[i])
-       task_objects[i] = {};
+      get_task_of_DOM(elem, true);
 
       // when its properties change
       function handle_change(mutations){
        // compute a patch
+       var i = get_index_of_DOM(elem);
        var patch = mutations.map(
         function(rec){
          var key = rec.attributeName;
@@ -228,6 +264,7 @@
        apply_task_patch(patch);
        // save the state
        var key = "backyard tasks";//maybe upvar this
+       collect_task_garbage();
        save_local(key);
        if(task_objects.length - 1 == i)
         get_DOM_at_index(task_objects.length, true);
