@@ -22,6 +22,61 @@
 
      var task_objects = [];
      var task_DOM = [];
+     function get_task_and_DOM(i){
+      return [task_objects[i], task_DOM[i]];
+     }
+     function get_index_of_task(ob){
+      return task_objects.indexOf(ob);
+     }
+     function get_index_of_DOM(elem, commit){
+      var index = task_DOM.indexOf(elem);
+      if(!commit) return index;
+      if(-1 != index) return index;
+      index = task_DOM.length;
+      task_DOM.push(elem);
+      return index;
+     }
+     function get_task_of_DOM(elem, commit){
+      if(arguments.length < 2) commit = true;
+      var i = get_index_of_DOM(elem);
+      if(i != -1)
+       return get_task_and_DOM(i)[0];
+      var result = {};
+      if(!commit) return result;
+      i = task_objects.length;
+      task_objects[i] = result;
+      task_DOM[i] = elem;
+      return result;
+     }
+     function get_DOM_at_index(i, commit){
+      if(task_DOM[i]) return task_DOM[i];
+
+      var result = document.createElement("backyard-task");
+      var li = document.createElement("li");
+      li.appendChild(result);
+      document.getElementById("tasks").appendChild(li);
+      if(!commit) return result;
+
+      task_DOM[i] = result;
+      return result;
+     }
+     function get_DOM_of_task(ob, commit){
+      if(arguments.length < 2) commit = true;
+      var i = get_index_of_task(ob);
+      var result;
+      if(i != -1)
+       result = get_task_and_DOM(i)[1];
+      if(result) return result;
+
+      if(i == -1)
+       i = task_objects.length;
+
+      result = get_DOM_at_index(i, commit);
+      task_objects[i] = ob;
+      return result;
+
+     }
+
      function load_local(key){
       if(!arguments.length)
        key = "backyard tasks";
@@ -35,26 +90,129 @@
       localStorage[key] = JSON.stringify(task_objects);
      }
 
+     function diff_DOM_task_against_task_object(elem, task, id){
+      //computes diff from task to DOM (that is, DOM minus task)
+      var result = {id: id};
+
+      var title = elem.getAttribute("title");
+      if(!title) result.title = "";
+      if(!("title" in result))
+       result.title = title;
+      if(result.title == task.title) delete result.title;
+
+      var finished = elem.getAttribute("finished");
+      if(!finished) result.finished = "false";
+      if(!("finished" in result))
+       result.finished = finished;
+      if(result.finished == task.finished) delete result.finished;
+
+      var diff = [];
+      if("title" in result)
+       diff.push(
+        {
+         id:id,
+         key:"title",
+         old:task.title,
+         "new":result.title
+        }
+       );
+      if("finished" in result)
+       diff.push(
+        {
+         id:id,
+         key:"finished",
+         old:task.finished,
+         "new":result.finished
+        }
+       );
+      return diff;
+     }
+     function diff_at_index(i){
+      pair = get_task_and_DOM(i);
+      var t = pair[0];
+      var e = pair[1];
+      return diff_DOM_task_against_task_object(e, t, i)
+     }
+
      function task_DOM_to_patch(){
-      //TODO
-      return [];
+      var existing = document.getElementsByTagName("backyard-task");
+      function eacher(elem, i, arr){
+       //TODO: if it exists in task_DOM, diff it
+       var id = get_index_of_DOM(elem, false);
+       if(id != -1)
+        return diff_DOM_task_against_task_object(id);
+       id = i;
+       if(task_objects[id] || task_DOM[id])
+        id += task_objects.length;
+       task_DOM[id] = elem;
+       patch = [];
+       if(!elem) return patch;
+       var title_node = elem.getAttributeNode("title");
+       if(title_node)
+        patch.push({id: id, key: "title", "new": title_node.value});
+       var status_node = elem.getAttributeNode("finished");
+       if(status_node)
+        patch.push({id: id, key: "finished", "new": status_node.value});
+       if(!patch.length)
+        patch = [
+         {id: id, key: "title", "new": ""},
+         {id: id, key: "finished", "new": false}
+        ];
+       return patch;
+      }
+      return [].concat.apply(
+       [],
+       [].map.call(existing, eacher).filter(function I(x){return x;})
+      );
      }
      function apply_task_patch(patch){
       patch.forEach(
        function(p){
-        var task = task_objects[p.id]
+        var id = p.id;
+        if(!(task_objects[id])) task_objects[id] = {};
+        var task = task_objects[id];
         task[p.key] = p["new"];
-        console.log(task);
        }
       );
      }
      function task_state_to_DOM(){
-      // TODO
+      var removed_DOM = [];
+
+      //remove untracked task elements from the DOM
+      var elements = document.getElementsByTagName("backyard-task");
+      [].filter.call(
+       elements,
+       function(e){
+        return -1 == get_index_of_DOM(e);
+       }
+      ).forEach(
+       function(e){
+        removed_DOM.push(e);
+        e.parentNode.removeChild(e);
+       }
+      );
+
+      //tie loose task objects to the DOM
+      task_objects.forEach(
+       function(t, i, a){
+        var elem = get_DOM_of_task(t, true);
+        "title finished".split(" ").forEach(
+         function(k){
+          if(k in t)
+           elem.setAttribute(k, t[k]);
+         }
+        )
+       }
+      );
+
+      //TODO: consider emitting an event for removed_DOM
      }
      function register_DOM_task(elem){
-      var i = task_DOM.length;
-      task_DOM.push(elem);
-      task_objects[i] = {};
+
+      var i = get_index_of_DOM(elem, true);
+      if(!task_objects[i])
+       task_objects[i] = {};
+
       // when its properties change
       function handle_change(mutations){
        // compute a patch
@@ -71,6 +229,8 @@
        // save the state
        var key = "backyard tasks";//maybe upvar this
        save_local(key);
+       if(task_objects.length - 1 == i)
+        get_DOM_at_index(task_objects.length, true);
       }
       // register this behavior
       var observer = new MutationObserver(handle_change);
@@ -97,7 +257,9 @@
       var task_callbacks = element_listeners["backyard-task"];
       if(!("created" in task_callbacks))
        task_callbacks.created = function created(elem){
-        return created.callbacks.map(function(f){return f.call(elem);});
+        return created.callbacks.map(
+         function(f){return f.call(elem);}
+        );
        };
       var created = task_callbacks.created;
       if(!("callbacks" in created))
@@ -119,10 +281,10 @@
 
      function ready(){
       var task_template = document.getElementById("task");
-      var temple = task_template;
       load_local("backyard tasks");
 
       var patch = task_DOM_to_patch();
+      //TODO: deduplicate DOM tasks against historic tasks
       apply_task_patch(patch);
 
       task_state_to_DOM();
@@ -144,7 +306,7 @@
   <h1>TODO</h1>
   <ul id="tasks">
    <li>
-    <backyard-task />
+    <backyard-task id="demo" title="create some tasks"/>
    </li>
   </ul>
  </body>
